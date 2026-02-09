@@ -40,21 +40,26 @@ func mkdirrr(){
 func create(){
 	//creating the HEAD file (empty)
 	file_name := "HEAD"
-	_, err := os.Create(file_name)
+	p, err := os.Create(file_name)
 	check(err)
+	defer p.Close()
 
 	//creating the config file (empty)
 	file_name = "config.ini"
-	_, err = os.Create(file_name)
+	p, err = os.Create(file_name)
+	config(p)
 	check(err)
+	defer p.Close()
 	
 	//creating the description file (empty)
 	file_name = "description"
-	_, err = os.Create(file_name)
+	p, err = os.Create(file_name)
+	description(p)
 	check(err)
+	defer p.Close()
 }
 
-func HEAD(file *os.File){
+func config(file *os.File){
 	cfg, err := ini.Load(file)
 	if err != nil{
 		log.Fatalf("Something's wrong with the config file.")
@@ -104,9 +109,8 @@ func description(file *os.File){
 		log.Fatalf("Couldn't write data to the description file.")
 	}
 }
-
-
-
-func main(){
-	fmt.Println("Hola")
+func Init(){
+	mkdirrr()
+	create()
+	fmt.Println("The .git folder created succesfully.")
 }
