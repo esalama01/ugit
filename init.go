@@ -16,24 +16,24 @@ func check(e error) {
 }
 
 func mkdirrr(){
-	//creating the .git directory
-	err := os.Mkdir(".git", 0755)
+	//creating the .ugit directory
+	err := os.Mkdir(".ugit", 0755)
 	check(err)
 
 	//creating the hooks subd
-	err = os.MkdirAll(".git/hooks", 0755)
+	err = os.MkdirAll(".ugit/hooks", 0755)
 	check(err)
 
 	//creating the info subd
-	err = os.MkdirAll(".git/info", 0755)
+	err = os.MkdirAll(".ugit/info", 0755)
 	check(err)
 
 	//creating the objects subd
-	err = os.MkdirAll(".git/objects", 0755)
+	err = os.MkdirAll(".ugit/objects", 0755)
 	check(err)
 
 	//creating the refs subd
-	err = os.MkdirAll(".git/refs", 0755)
+	err = os.MkdirAll(".ugit/refs", 0755)
 	check(err)
 }
 
@@ -112,5 +112,5 @@ func description(file *os.File){
 func Init(){
 	mkdirrr()
 	create()
-	fmt.Println("The .git folder created succesfully.")
+	fmt.Println("The .ugit folder created succesfully.")
 }
