@@ -8,7 +8,7 @@ import(
 
 func main(){
 	args := os.Args
-	switch args[2]{
+	switch args[1]{
 	case "init":
 		Init()
 	default:
