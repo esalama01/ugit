@@ -14,7 +14,7 @@ type Tree struct {
 type User struct {
 	user_name string `json:"username"`
 	user_email string `json:"email address"`
-	EventDate time.Time `json:"event_date"`
+	EventDate time.Time `json:"event date"`
 }
 
 type Commit struct {
