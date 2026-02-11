@@ -34,6 +34,14 @@ func mkdirrr() {
 	//creating the objects subd
 	err = os.MkdirAll(".ugit/objects", 0755)
 	check(err)
+	
+	//creating the objects/info subd
+	err = os.MkdirAll(".ugit/objects/info", 0755)
+	check(err)
+
+	//creating the objects/pack subd
+	err = os.MkdirAll(".ugit/objects/pack", 0755)
+	check(err)
 
 	//creating the refs subd
 	err = os.MkdirAll(".ugit/refs", 0755)

@@ -1,4 +1,8 @@
-import "encoding/json"
+package main
+import (
+	"encoding/json"
+	"time"
+)
 
 type Blob struct {
 	Blob_ID string //sha1 hash key of this blob
@@ -7,8 +11,8 @@ type Blob struct {
 
 type Tree struct {
 	Tree_ID string //sha1 hash key of this tree
-	blob map[string]*string //map between blob names and pointers to their ids inside this tree 
-	subtree map[string]*string //maps between subtrees names and pointer of their id's inside this tree
+	blob map[string]*string //maps between blobs' names and pointers to their ids inside this tree 
+	subtree map[string]*string //maps between subtrees' names and pointer of their ids inside this tree
 }
 
 type User struct {
@@ -20,7 +24,7 @@ type User struct {
 type Commit struct {
 	Commit_ID string //sha1 hash key of this commit
 	Author *User
-	parent_tree *string //points to parent tree id
-	parents  []*string //slice of pointer to parents commit id's
+	parent_tree *string //points to parent tree's id
+	parents  []*string //slice of pointers to parents commit's ids
 	message string
 }
