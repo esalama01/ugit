@@ -1,6 +1,7 @@
 import(
 	"os"
 	//"log"
+	"compress/zlib"
 	"strings"
 	"os/exec"
 	"crypto/sha1"
@@ -13,7 +14,7 @@ func check(e error) {
 }
 
 type Objects interface {
-	Get_Hash_Id()	string
+	Get_Hash()	string
 
 }
 
@@ -36,8 +37,18 @@ func Sha1(file *os.File) [32]byte{
 	return sha1.Sum(data)
 }
 
-func (b Blob)Get_Hash_ID(f *os.File){
+func compression(file *os.File) {
+	data, err := os.ReadFile(file)
+	check(err)
+	var b bytes.Buffer
+	w := zlib.NewWriter(&b)
+	w.Write([]byte(data))
+	w.Close()
+	return b.Bytes()
+}
+
+func (b Blob)Get_Hash(f *os.File){
 	id := strings.Trimspace(Sha1(f))
 	b.Blob_ID = id
-	b.value =  
+	
 }

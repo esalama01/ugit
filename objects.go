@@ -1,6 +1,6 @@
 package main
 import (
-	"encoding/json"
+	//"encoding/json"
 	"time"
 )
 
@@ -16,9 +16,9 @@ type Tree struct {
 }
 
 type User struct {
-	user_name string `json:"user name"`
-	user_email string `json:"email address"`
-	EventDate time.Time `json:"event date"`
+	Username string `json:"user_name"`
+	Useremail string `json:"email_address"`
+	EventDate time.Time `json:"event_date"`
 }
 
 type Commit struct {
