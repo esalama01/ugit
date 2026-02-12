@@ -1,7 +1,37 @@
 import(
 	"os"
+	"log"
+	"os/exec"
 )
 
-func hash-object(){
+func check(e error) {
+    if e != nil {
+        panic(e)
+    }
+}
+
+type Objects interface {
+	Hash_object()	string
+
+}
+
+func Header(file *os.File) {//must return a "_blob__space_size of the contents of the file in bytes_\0_"
+	//i'll be using the exec.Command() function
+	file_name := file.Name()
+	cmd := exec.Command("wc", "-c", file_name)
+	size, err := cmd.Output()
+	check(err)
+	s1 := "blob"
+	s2 := "%d,size"
+	s3 := '\0'
+	result := s1 + " " + s2 + s3 //string concatenation
+	return result
+}
+
+func Sha1() {
+	
+}
+
+func Hash_object(){
 	
 }

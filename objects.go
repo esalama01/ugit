@@ -16,7 +16,7 @@ type Tree struct {
 }
 
 type User struct {
-	user_name string `json:"username"`
+	user_name string `json:"user name"`
 	user_email string `json:"email address"`
 	EventDate time.Time `json:"event date"`
 }
