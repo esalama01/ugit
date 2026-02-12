@@ -2,6 +2,7 @@ import(
 	"os"
 	"log"
 	"os/exec"
+	"crypto/sha1"
 )
 
 func check(e error) {
@@ -15,7 +16,7 @@ type Objects interface {
 
 }
 
-func Header(file *os.File) {//must return a "_blob__space_size of the contents of the file in bytes_\0_"
+func Header(file *os.File) string{//must return a "_blob__space_size of the contents of the file in bytes_\0_"
 	//i'll be using the exec.Command() function
 	file_name := file.Name()
 	cmd := exec.Command("wc", "-c", file_name)
@@ -28,8 +29,10 @@ func Header(file *os.File) {//must return a "_blob__space_size of the contents o
 	return result
 }
 
-func Sha1() {
-	
+func Sha1(file *os.File) [32]byte{
+	header := Header(file)
+	data := []byte(header)
+	return sha1.Sum(data)
 }
 
 func Hash_object(){
