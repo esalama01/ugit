@@ -18,7 +18,7 @@ type Objects interface {
 
 }
 
-func Header(file *os.File) string{//must return a "_blob__space_size of the contents of the file in bytes_\0_"
+func Header(file *os.File) string{//must return a "blob__space_size of the contents of the file in bytes_\0"
 	//i'll be using the exec.Command() function
 	file_name := file.Name()
 	cmd := exec.Command("wc", "-c", file_name)
@@ -31,24 +31,25 @@ func Header(file *os.File) string{//must return a "_blob__space_size of the cont
 	return result
 }
 
-func Sha1(file *os.File) [32]byte{
+func Sha1(file *os.File) string{
 	header := Header(file)
 	data := []byte(header)
-	return sha1.Sum(data)
+	hash := sha1.Sum(data) //in [32]byte format
+	return string(hash[:]) //converted hash to string
 }
 
-func compression(file *os.File) {
+func compression(file *os.File) string{
 	data, err := os.ReadFile(file)
 	check(err)
 	var b bytes.Buffer
 	w := zlib.NewWriter(&b)
 	w.Write([]byte(data))
 	w.Close()
-	return b.Bytes()
+	return string(b.Bytes()[:])
 }
 
 func (b Blob)Get_Hash(f *os.File){
 	id := strings.Trimspace(Sha1(f))
 	b.Blob_ID = id
-	
+	b.Content = compression(f)
 }

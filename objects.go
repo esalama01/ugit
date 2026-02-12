@@ -6,7 +6,7 @@ import (
 
 type Blob struct {
 	Blob_ID string //sha1 hash key of this blob
-	value string
+	Content string
 }
 
 type Tree struct {
