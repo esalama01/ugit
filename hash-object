@@ -1,6 +1,7 @@
 import(
 	"os"
-	"log"
+	//"log"
+	"strings"
 	"os/exec"
 	"crypto/sha1"
 )
@@ -12,7 +13,7 @@ func check(e error) {
 }
 
 type Objects interface {
-	Hash_object()	string
+	Get_Hash_Id()	string
 
 }
 
@@ -35,6 +36,8 @@ func Sha1(file *os.File) [32]byte{
 	return sha1.Sum(data)
 }
 
-func Hash_object(){
-	
+func (b Blob)Get_Hash_ID(f *os.File){
+	id := strings.Trimspace(Sha1(f))
+	b.Blob_ID = id
+	b.value =  
 }
