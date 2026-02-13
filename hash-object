@@ -1,11 +1,29 @@
 import(
 	"os"
+	"fmt"
 	//"log"
 	"compress/zlib"
 	"strings"
 	"os/exec"
 	"crypto/sha1"
+	"path/filepath"
 )
+
+func firstN(s string, n int) { //a function that returns the first n characters of a string
+	runes := []rune(s)
+	 if n >= len(runes) - 1 {
+        return s
+    }
+	return string(runes[:n + 1])
+}
+func lastN(s string, n int) { //a function that returns the first n characters of a string
+	runes := []rune(s)
+	 if n >= len(runes) {
+        return s
+    }
+	return string(runes[n:])
+}
+
 
 func check(e error) {
     if e != nil {
@@ -38,7 +56,7 @@ func Sha1(file *os.File) string{
 	return string(hash[:]) //converted hash to string
 }
 
-func compression(file *os.File) string{
+func Compression(file *os.File) string{
 	data, err := os.ReadFile(file)
 	check(err)
 	var b bytes.Buffer
@@ -48,8 +66,25 @@ func compression(file *os.File) string{
 	return string(b.Bytes()[:])
 }
 
-func (b Blob)Get_Hash(f *os.File){
+func (b Blob)Get_Hash(f *os.File)(string, string){
 	id := strings.Trimspace(Sha1(f))
-	b.Blob_ID = id
-	b.Content = compression(f)
+	return id, Compression(f)
+}
+
+func (b Blob)git_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content.
+	b.Blob_ID, b.Content := Get_Hash(f)
+	folder_name := firstN(b.Blob_Id, 2)
+	file_name := lastN(b.Blob_Id, 38)
+	// And then i should create the necessary repos to store the blob in
+	//the folders's name is the first two chars of b.Blob_ID
+	
+	targetDir := ".ugit/objects" //go inside the .ugit/objects directory
+	if err := os.Chdir(targetDir); err != nil {
+		log.Fatalf("Error : %v\n", err)
+	}
+
+	err = os.Mkdir(folder_name, 0755) //creating the blob's dirtectory
+	check(err)
+
+	
 }
