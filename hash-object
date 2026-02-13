@@ -42,13 +42,16 @@ func Header(file *os.File) string{//must return a "blob__space_size of the conte
 	cmd := exec.Command("wc", "-c", file_name)
 	out, err := cmd.Output()
 	check(err)
+
 	size := string(out)
 	var myInt int
 	_, err = fmt.Sscanf(size, "%d", &myInt)
 	check(err)
+	
+	
 	s1 := "blob"
 	s2 := strconv.Itoa(myInt)
-	s3 := "\000"
+	s3 := "\000" //null character
 	result := s1 + " " + s2 + s3 //string concatenation
 	return result
 }
@@ -92,7 +95,7 @@ func (b Blob)Ugit_hash_object(f *os.File)(string){// when called i should call G
 		log.Fatalf("Error : %v\n", err)
 	}
 
-	err = os.Mkdir(folder_name, 0755) //creating the blob's dirtectory
+	err = os.MkdirAll(folder_name, 0755) //creating the blob's dirtectory
 	check(err)
 	
 	// creating the blob's file
