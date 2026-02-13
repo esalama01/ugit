@@ -7,16 +7,17 @@ import(
 	"os/exec"
 	"crypto/sha1"
 	"path/filepath"
+	"strconv"
 )
 
 func firstN(s string, n int) { //a function that returns the first n characters of a string
 	runes := []rune(s)
-	 if n >= len(runes) - 1 {
+	 if n >= len(runes) {
         return s
     }
-	return string(runes[:n + 1])
+	return string(runes[:n])
 }
-func lastN(s string, n int) { //a function that returns the first n characters of a string
+func lastN(s string, n int) { //a function that returns the last n characters of a string
 	runes := []rune(s)
 	 if n >= len(runes) {
         return s
@@ -39,18 +40,25 @@ func Header(file *os.File) string{//must return a "blob__space_size of the conte
 	//i'll be using the exec.Command() function
 	file_name := file.Name()
 	cmd := exec.Command("wc", "-c", file_name)
-	size, err := cmd.Output()
+	out, err := cmd.Output()
+	check(err)
+	size := string(out)
+	var myInt int
+	_, err = fmt.Sscanf(size, "%d", &myInt)
 	check(err)
 	s1 := "blob"
-	s2 := "%d,size"
-	s3 := '\0'
+	s2 := strconv.Itoa(myInt)
+	s3 := "\000"
 	result := s1 + " " + s2 + s3 //string concatenation
 	return result
 }
 
 func Sha1(file *os.File) string{
+	content, err := os.ReadFile(file.Name())
+	check(err)
+
 	header := Header(file)
-	data := []byte(header)
+	data := []byte(header + string(content))
 	hash := sha1.Sum(data) //in [32]byte format
 	return string(hash[:]) //converted hash to string
 }
