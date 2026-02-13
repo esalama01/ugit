@@ -32,8 +32,7 @@ func check(e error) {
 }
 
 type Objects interface {
-	Get_Hash()	string
-
+	Ugit_hash_object() string
 }
 
 func Header(file *os.File) string{//must return a "blob__space_size of the contents of the file in bytes_\0"
@@ -66,15 +65,17 @@ func Compression(file *os.File) string{
 	return string(b.Bytes()[:])
 }
 
-func (b Blob)Get_Hash(f *os.File)(string, string){
+func Get_Hash(f *os.File)(string, string){
 	id := strings.Trimspace(Sha1(f))
 	return id, Compression(f)
 }
 
-func (b Blob)git_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content.
+func (b Blob)Ugit_hash_object(f *os.File)(string){// when called i should call Get_Hash to generate the hash id  and the compressed content.
+	
 	b.Blob_ID, b.Content := Get_Hash(f)
 	folder_name := firstN(b.Blob_Id, 2)
 	file_name := lastN(b.Blob_Id, 38)
+	
 	// And then i should create the necessary repos to store the blob in
 	//the folders's name is the first two chars of b.Blob_ID
 	
@@ -85,6 +86,15 @@ func (b Blob)git_hash_object(f *os.File){// when called i should call Get_Hash t
 
 	err = os.Mkdir(folder_name, 0755) //creating the blob's dirtectory
 	check(err)
-
 	
+	// creating the blob's file
+	fullPath := filepath.Join(folder_name, file_name)
+	p, err := os.Create(fullPath)
+	check(err)
+	defer p.Close()
+	
+	//writing the compressed content to the file
+	_, err = p.WriteString(b.Content)
+	check(err)
+	fmt.Println("Blob created succesfully.")
 }
