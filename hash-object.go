@@ -3,13 +3,14 @@ package main
 import(
 	"os"
 	"fmt"
-	//"log"
+	"log"
 	"compress/zlib"
 	"strings"
 	"os/exec"
 	"crypto/sha1"
 	"path/filepath"
 	"strconv"
+	"bytes"
 )
 
 func firstN(s string, n int) string { //a function that returns the first n characters of a string
@@ -76,7 +77,7 @@ func Get_Hash(f *os.File)(string, string){
 	return id, Compression(f)
 }
 
-func (b Blob)Ugit_hash_object(f *os.File)(string){// when called i should call Get_Hash to generate the hash id  and the compressed content.
+func Ugit_hash_object(f *os.File)(_{// when called i should call Get_Hash to generate the hash id  and the compressed content.
 	
 	b.Blob_ID, b.Content := Get_Hash(f)
 	folder_name := firstN(b.Blob_Id, 2)
@@ -90,7 +91,7 @@ func (b Blob)Ugit_hash_object(f *os.File)(string){// when called i should call G
 		log.Fatalf("Error : %v\n", err)
 	}
 
-	err = os.MkdirAll(folder_name, 0755) //creating the blob's dirtectory
+	err := os.MkdirAll(folder_name, 0755) //creating the blob's dirtectory
 	check(err)
 	
 	// creating the blob's file
