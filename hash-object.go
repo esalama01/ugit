@@ -12,6 +12,11 @@ import(
 	"strconv"
 	"bytes"
 )
+//------------------------------------------------------------------
+type Objects interface {
+	Ugit_hash_object() string
+}
+//------------------------------------------------------------------
 
 func firstN(s string, n int) string { //a function that returns the first n characters of a string
 	runes := []rune(s)
@@ -28,9 +33,7 @@ func lastN(s string, n int) string{ //a function that returns the last n charact
 	return string(runes[n:])
 }
 
-type Objects interface {
-	Ugit_hash_object() string
-}
+
 
 func Header(file *os.File) string{//must return a "blob__space_size of the contents of the file in bytes_\0"
 	//i'll be using the exec.Command() function
@@ -73,15 +76,18 @@ func Compression(file *os.File) string{
 }
 
 func Get_Hash(f *os.File)(string, string){
-	id := strings.Trimspace(Sha1(f))
+	id := strings.TrimSpace(Sha1(f))
 	return id, Compression(f)
 }
 
-func Ugit_hash_object(f *os.File)(_{// when called i should call Get_Hash to generate the hash id  and the compressed content.
-	
-	b.Blob_ID, b.Content := Get_Hash(f)
-	folder_name := firstN(b.Blob_Id, 2)
-	file_name := lastN(b.Blob_Id, 38)
+func (blob Blob)Ugit_hash_object(f *os.File)(*Blob){// when called i should call Get_Hash to generate the hash id  and the compressed content.
+	val1, val2 := Get_Hash(f)
+	b := Blob{
+		Blob_ID : val1,
+		Content : val2,
+	}
+	folder_name := firstN(val1, 2)
+	file_name := lastN(val1, 38)
 	
 	// And then i should create the necessary repos to store the blob in
 	//the folders's name is the first two chars of b.Blob_ID
@@ -104,4 +110,5 @@ func Ugit_hash_object(f *os.File)(_{// when called i should call Get_Hash to gen
 	_, err = p.WriteString(b.Content)
 	check(err)
 	fmt.Println("Blob created succesfully.")
+	return &b
 }
