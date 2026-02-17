@@ -1,3 +1,5 @@
+package main
+
 import(
 	"os"
 	"fmt"
@@ -10,26 +12,19 @@ import(
 	"strconv"
 )
 
-func firstN(s string, n int) { //a function that returns the first n characters of a string
+func firstN(s string, n int) string { //a function that returns the first n characters of a string
 	runes := []rune(s)
 	 if n >= len(runes) {
         return s
     }
 	return string(runes[:n])
 }
-func lastN(s string, n int) { //a function that returns the last n characters of a string
+func lastN(s string, n int) string{ //a function that returns the last n characters of a string
 	runes := []rune(s)
 	 if n >= len(runes) {
         return s
     }
 	return string(runes[n:])
-}
-
-
-func check(e error) {
-    if e != nil {
-        panic(e)
-    }
 }
 
 type Objects interface {
@@ -67,7 +62,7 @@ func Sha1(file *os.File) string{
 }
 
 func Compression(file *os.File) string{
-	data, err := os.ReadFile(file)
+	data, err := os.ReadFile(file.Name())
 	check(err)
 	var b bytes.Buffer
 	w := zlib.NewWriter(&b)

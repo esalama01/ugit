@@ -1,25 +1,25 @@
 package main
-
-import(
+import (
 	"os"
-	"fmt"
+	"path/filepath"
 )
 
 type Index struct {
-	Name string
-	Path_id string 
+	Path string
+	Id string 
 	Permissions int
 	Stage_number int
 }
 
-func (i Index) get_name(f *os.File) {
-	i.name := f.Name()
+func (i Index) get_name(f *os.File) string{
+	return filepath.Dir(f.Name())
 }
 
-func (i index) get_id(f *os.File) {
-	i.Path_id := Get_Hash(f)
+func (i Index) get_id(f *os.File) string{
+	hash, _ := Get_hash(f)
+	return hash
 }
 
-func (i index) get_permissions(f os.File) { //each file need to have the 644 | 755 permissions.
+func (i Index) get_permissions(f os.File) int{ //each file need to have the 644 | 755 permissions.
 	
 }
