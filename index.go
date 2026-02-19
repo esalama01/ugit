@@ -49,6 +49,9 @@ func (blob Blob) get_id(f *os.File) string{
 	return hash
 }
 
+func (blob Blob) get_stage_number(number int) int {
+	return number
+}
 /*
 func (blob Blob) get_permissions(f os.File) string{ //each file need to have the 644 | 755 permissions.
 	info, err := os.Stat(f.Name())
@@ -61,3 +64,4 @@ func (blob Blob) get_permissions(f os.File) string{ //each file need to have the
 type StagingArea struct {
 	entries map[string] *Index //a mapping between a file name and it s Index format
 }
+

@@ -80,7 +80,12 @@ func Get_Hash(f *os.File)(string, string){
 	return id, Compression(f)
 }
 
-func (blob Blob)Ugit_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content.
+func (blob Blob)Ugit_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object command
+	val1, val2 := Get_Hash(f)
+	fmt.Println("%s%s",val1,val2)
+}
+
+func (blob Blob)Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object -w command
 	val1, val2 := Get_Hash(f)
 	b := Blob{
 		Blob_ID : val1,
@@ -88,7 +93,6 @@ func (blob Blob)Ugit_hash_object(f *os.File){// when called i should call Get_Ha
 	}
 	folder_name := firstN(b.Blob_ID, 2)
 	file_name := lastN(b.Blob_ID, 38)
-	
 	// And then i should create the necessary repos to store the blob in
 	//the folders's name is the first two chars of b.Blob_ID
 	
