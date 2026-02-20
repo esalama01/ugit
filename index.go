@@ -2,8 +2,8 @@ package main
 import (
 	"os"
 	"fmt"
-	"log"
 	"strconv"
+	"path/filepath"
 )
 
 type Metadata struct {
@@ -56,38 +56,29 @@ func (blob Blob) get_permissions(f os.File) string{ //each file need to have the
 */
 
 type StagingArea struct {
-	entry map[string] *Index //a mapping between a file name and it s Index format
+	entries map[string] *Index //a mapping between a file's name and it s Index format
 }
 
-func indexfileline(idx *Index)(string){
+func indexfileline(idx *Index)(string){ //a method for the staging area.
 	s1 := string(idx.metadata.Permissions)
 	s2 := string(idx.Id)
 	s3 := strconv.Itoa(idx.Stage_number)
 	s4 := idx.Path
-	result := s1 + " " + s2 + " " + s3 + "       " + s4
+	result := s1 + " " + s2 + " " + s3 + "         " + s4 +"\n"
 	return result
 }
 
-func indexfileadd(idx *Index, area *StagingArea)(*StagingArea){
-	targetDir := ".ugit/" //go inside the .ugit directory
-	if err := os.Chdir(targetDir); err != nil {
-		log.Fatalf("Error : %v\n", err)
-	}
-
-	file, err := os.Open("index")
+func indexfileadd(area *StagingArea){ //writing to the index file
+	file, err := os.OpenFile(".git/index", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	check(err)
 
-	_, err = file.WriteString(indexfileline(idx))
-	check(err)
-	
-	area.entry[idx.Path] = idx
-	
-	targetDir = ".." //go back to the parent directory
-	if err := os.Chdir(targetDir); err != nil {
-		log.Fatalf("Error : %v\n", err)
+	for _, idx := range area.entries {
+		_, err = file.WriteString(indexfileline(idx))
+		check(err)
 	}
-	return area
+	
 }
+
 func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementing the git update-index --add command
 	val1, _ := Get_Hash(f)
 	mdata1, mdata2, mdata3 :=  get_metadata(f)
@@ -103,5 +94,7 @@ func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementin
 		metadata : &mdata,
 		Stage_number : get_stage_number(0),
 	}
-
+	area.entries[filepath.Clean(f.Name())] = &idx
 }
+
+func Ugit_add(f os.File, )
