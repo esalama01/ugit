@@ -37,7 +37,11 @@ func main(){
 			check(err)
 			Ugit_update_index(file,&area)
 		}
-
+	case "add":
+		file, err := os.Open(args[2])
+		check(err)
+		Ugit_update_index(file,&area)
+		indexfileadd(&area)
 	default:
 		fmt.Println("holaa")
 	}
