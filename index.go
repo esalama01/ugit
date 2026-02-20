@@ -2,15 +2,17 @@ package main
 import (
 	"os"
 	"fmt"
+	"log"
+	"strconv"
 )
 
 type Metadata struct {
 	Permissions string
 	Last_modification string
-	size int
+	size int64
 }
 
-func (data Metadata) get_metadata(f *os.File) (string, string, int64){
+func get_metadata(f *os.File) (string, string, int64){
 
 	//--------the date of the last modification
 	fileInfo, err := os.Stat(f.Name())
@@ -36,22 +38,14 @@ type Index struct {
 	Stage_number int
 }
 
-func (blob Blob) get_object_type() string {
-	return "Blob"
-}
-
-func (blob Blob) get_path(f *os.File) string{
+func get_path(f *os.File) string{
 	return f.Name()
 }
 
-func (blob Blob) get_id(f *os.File) string{
-	hash, _ := Get_Hash(f)
-	return hash
-}
-
-func (blob Blob) get_stage_number(number int) int {
+func get_stage_number(number int) int {
 	return number
 }
+
 /*
 func (blob Blob) get_permissions(f os.File) string{ //each file need to have the 644 | 755 permissions.
 	info, err := os.Stat(f.Name())
@@ -62,6 +56,52 @@ func (blob Blob) get_permissions(f os.File) string{ //each file need to have the
 */
 
 type StagingArea struct {
-	entries map[string] *Index //a mapping between a file name and it s Index format
+	entry map[string] *Index //a mapping between a file name and it s Index format
 }
 
+func indexfileline(idx *Index)(string){
+	s1 := string(idx.metadata.Permissions)
+	s2 := string(idx.Id)
+	s3 := strconv.Itoa(idx.Stage_number)
+	s4 := idx.Path
+	result := s1 + " " + s2 + " " + s3 + "       " + s4
+	return result
+}
+
+func indexfileadd(idx *Index, area *StagingArea)(*StagingArea){
+	targetDir := ".ugit/" //go inside the .ugit directory
+	if err := os.Chdir(targetDir); err != nil {
+		log.Fatalf("Error : %v\n", err)
+	}
+
+	file, err := os.Open("index")
+	check(err)
+
+	_, err = file.WriteString(indexfileline(idx))
+	check(err)
+	
+	area.entry[idx.Path] = idx
+	
+	targetDir = ".." //go back to the parent directory
+	if err := os.Chdir(targetDir); err != nil {
+		log.Fatalf("Error : %v\n", err)
+	}
+	return area
+}
+func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementing the git update-index --add command
+	val1, _ := Get_Hash(f)
+	mdata1, mdata2, mdata3 :=  get_metadata(f)
+	mdata := Metadata{
+		Permissions : mdata2,
+		Last_modification : mdata1,
+		size : mdata3,
+	}
+	idx := Index {
+		Path : get_path(f),
+		Id : val1,
+		Type : "blob",
+		metadata : &mdata,
+		Stage_number : get_stage_number(0),
+	}
+
+}
