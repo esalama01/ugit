@@ -11,6 +11,7 @@ import(
 	"path/filepath"
 	"strconv"
 	"bytes"
+	"encoding/hex"
 )
 //------------------------------------------------------------------
 type Objects interface {
@@ -62,7 +63,8 @@ func Sha1(file *os.File) string{
 	header := Header(file)
 	data := []byte(header + string(content))
 	hash := sha1.Sum(data) //in [32]byte format
-	return string(hash[:]) //converted hash to string
+	str := hex.EncodeToString(hash[:]) //converted hash to string
+	return string(str) //converted hash to string
 }
 
 func Compression(file *os.File) string{
@@ -81,8 +83,8 @@ func Get_Hash(f *os.File)(string, string){
 }
 
 func Ugit_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object command
-	val1, val2 := Get_Hash(f)
-	fmt.Printf("%s%s",val1,val2)
+	val1, _ := Get_Hash(f)
+	fmt.Printf("%s\n",val1)
 }
 
 func Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object -w command
