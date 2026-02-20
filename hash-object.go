@@ -94,7 +94,7 @@ func Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to gen
 		Content : val2,
 	}
 	folder_name := firstN(b.Blob_ID, 2)
-	file_name := lastN(b.Blob_ID, 38)
+	file_name := lastN(b.Blob_ID, 2)
 	// And then i should create the necessary repos to store the blob in
 	//the folders's name is the first two chars of b.Blob_ID
 	

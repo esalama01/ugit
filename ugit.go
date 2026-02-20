@@ -12,7 +12,7 @@ func main(){
 	case "init":
 		Init()
 	case "hash-object":
-		if args[2] == "w"{
+		if args[2] == "-w"{
 			file, err := os.Open(args[3])
 			check(err)
 			defer file.Close()
