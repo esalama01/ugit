@@ -72,6 +72,13 @@ func create() {
 	description(p)
 	check(err)
 	defer p.Close()
+
+	//creating the index file (empty)
+	file_name = "index"
+	p, err = os.Create(file_name)
+	config(p)
+	check(err)
+	defer p.Close()
 	
 	targetDir = ".." //go back to the parent directory
 	if err := os.Chdir(targetDir); err != nil {

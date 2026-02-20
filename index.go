@@ -69,7 +69,7 @@ func indexfileline(idx *Index)(string){ //a method for the staging area.
 }
 
 func indexfileadd(area *StagingArea){ //writing to the index file
-	file, err := os.OpenFile(".git/index", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	file, err := os.OpenFile(".ugit/index", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	check(err)
 
 	for _, idx := range area.entries {
@@ -96,5 +96,3 @@ func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementin
 	}
 	area.entries[filepath.Clean(f.Name())] = &idx
 }
-
-func Ugit_add(f os.File, )
