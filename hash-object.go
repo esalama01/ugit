@@ -80,12 +80,12 @@ func Get_Hash(f *os.File)(string, string){
 	return id, Compression(f)
 }
 
-func (blob Blob)Ugit_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object command
+func Ugit_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object command
 	val1, val2 := Get_Hash(f)
-	fmt.Println("%s%s",val1,val2)
+	fmt.Printf("%s%s",val1,val2)
 }
 
-func (blob Blob)Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object -w command
+func Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object -w command
 	val1, val2 := Get_Hash(f)
 	b := Blob{
 		Blob_ID : val1,

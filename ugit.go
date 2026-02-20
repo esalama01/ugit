@@ -13,9 +13,15 @@ func main(){
 		Init()
 	case "hash-object":
 		if args[2] == "w"{
-			Ugit_hash_object_w(&args[3])
+			file, err := os.Open(args[3])
+			check(err)
+			defer file.Close()
+			Ugit_hash_object_w(file)
 		}else{
-			Ugit_hash_object(&args[2])
+			file, err := os.Open(args[2])
+			check(err)
+			defer file.Close()
+			Ugit_hash_object(file)
 		}
 	default:
 		fmt.Println("holaa")
