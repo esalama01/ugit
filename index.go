@@ -8,12 +8,12 @@ import (
 )
 
 type Metadata struct {
-	Permissions string
-	Last_modification string
-	size int64
+	Permissions *string
+	Last_modification *string
+	size *int64
 }
 
-func get_metadata(f *os.File) (string, string, int64){
+func get_metadata(f *os.File) (*string, *string, *int64){
 
 	//--------the date of the last modification
 	fileInfo, err := os.Stat(f.Name())
@@ -28,7 +28,7 @@ func get_metadata(f *os.File) (string, string, int64){
 	//-------- the file's size
 	size := fileInfo.Size()
 	//------------------------------------------------------
-	return mod_time, permissions, size
+	return &mod_time, &permissions, &size
 }
 
 type Index struct {
@@ -61,7 +61,7 @@ type StagingArea struct {
 }
 
 func indexfileline(idx *Index)(string){ //a method for the staging area.
-	s1 := string(idx.metadata.Permissions)
+	s1 := string(*idx.metadata.Permissions)
 	s2 := string(idx.Id)
 	s3 := strconv.Itoa(idx.Stage_number)
 	s4 := idx.Path
@@ -88,13 +88,12 @@ func loadfromtheindex(area *StagingArea)(*StagingArea) { //a fuction that load e
 	for scanner.Scan() {//scan line by line
 		// Get the current line as a string
 		line := scanner.Text()
-		//now i have to retrieve the file path and re
+		//from ech line i have to retrieve the path + 
 	}
 
 	if err := scanner.Err(); err != nil {//checks for errs during scanning
 		log.Fatal(err)
 	}
-
 }
 
 func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementing the git update-index --add command
