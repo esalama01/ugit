@@ -53,8 +53,11 @@ func traversal()([]string){ // a function that stores the path of each file in m
     }
 	return paths
 }
+/*
+	finished the first implementation of my compare function but i ll need to heavily modify it. Don t forget to add the os.Stat() func to check if a file exists instead of all the slices shit.
+*/
 
-func compare(area *StagingArea, paths []string) (int, string){//a function to compare whatever s in the index file with my current working directory.
+func compare(area *StagingArea, paths []string) (int, []string){//a function to compare whatever s in the index file with my current working directory.
 	
 	var exists []string //i ll need it to ppoint to removed files
 	//i ll traverse the paths slice  and check if each path exists in my index
@@ -65,7 +68,7 @@ func compare(area *StagingArea, paths []string) (int, string){//a function to co
 		value, ok := area.entries[path]
 		if ok { //if it exists
 			val1, _ := Get_Hash(f)
-			leftovers = append(leftovers, path)
+			exists = append(exists, path)
 			if val1 == value.Id{ //if they re the same
 				return 2, path
 			}else{
@@ -76,11 +79,13 @@ func compare(area *StagingArea, paths []string) (int, string){//a function to co
 		}
 	}
 	//now i ll look for files that should be removed
-	keys := make([]int, len(area.entries)) //a slice containig the keys from my map.
+	keys := make([]string, len(area.entries)) //a slice containig the keys from my map.
 	i := 0
 	for k := range area.entries {
-    keys[i] = k
-    i++
+		keys[i] = k
+		i++
 	}
-	//i ll substract 
+	//i ll substract keys from exists
+	leftovers := difference(exists, keys)
+	return 4,leftovers
 }
