@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"path/filepath"
 	"bufio"
+	"strings"
+	"log"
 )
 
 type Metadata struct {
@@ -80,7 +82,7 @@ func indexfileadd(area *StagingArea){ //writing to the index file
 	
 }
 
-func loadfromtheindex(area *StagingArea)(*StagingArea) { //a fuction that load entries from the index file and puts the into the staging area
+func loadfromtheindex(area *StagingArea)(*StagingArea) { //a function that load entries from the index file and puts them into the staging area
 	index, err := os.Open(".ugit/index")
 	check(err)
 	defer index.Close()
@@ -88,12 +90,23 @@ func loadfromtheindex(area *StagingArea)(*StagingArea) { //a fuction that load e
 	for scanner.Scan() {//scan line by line
 		// Get the current line as a string
 		line := scanner.Text()
-		//from ech line i have to retrieve the path + 
+		//from ech line i have to retrieve the path + the hash_id + type(blob by default) + stage number(0 by default) and i ll let the metadata empty.
+		arr := strings.Fields(line) //i ll make an array of those vals.
+		
+		idx := Index { //filling the index struct
+		Path : arr[3],
+		Id : arr[2],
+		Type : "blob",
+		Stage_number : get_stage_number(0),
+		}
+
+		area.entries[filepath.Clean(arr[3])] = &idx
 	}
 
 	if err := scanner.Err(); err != nil {//checks for errs during scanning
 		log.Fatal(err)
 	}
+	return area
 }
 
 func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementing the git update-index --add command
