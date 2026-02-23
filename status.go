@@ -2,6 +2,8 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"fmt"
+	"io/fs"
 )
 /*
 	i will be implementing the git status command. But how?
@@ -14,6 +16,30 @@ import (
 		3.3- if a file exists on both of them, then kmel 7yatek.
 */
 
-//i will scan the each file in theh working directory with each entry in the staging area
 
-for 
+func traversal()([]string){ // a function that stores the path of each file in my directory on a slice. 
+	var paths []string //a slice to store the paths in
+	root := "." //the current directory
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+            return err
+        }
+		if d.IsDir() {
+    		if d.Name() == ".ugit" {//skipping the ugit directory
+            	return filepath.SkipDir
+        	}
+    	}
+        if !d.IsDir() {
+            paths = append(paths,path)
+        }
+        return nil
+	})
+	if err != nil {
+        fmt.Printf("error walking the path %q: %v\n", root, err)
+    }
+	return paths
+}
+
+func compare(area *StagingArea) {
+	
+}

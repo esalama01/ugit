@@ -82,7 +82,7 @@ func indexfileadd(area *StagingArea){ //writing to the index file
 	
 }
 
-func loadfromtheindex(area *StagingArea)(*StagingArea) { //a function that load entries from the index file and puts them into the staging area
+func Loadfromtheindex(area *StagingArea)(*StagingArea) { //a function that load entries from the index file and puts them into the staging area
 	index, err := os.Open(".ugit/index")
 	check(err)
 	defer index.Close()

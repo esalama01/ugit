@@ -42,6 +42,8 @@ func main(){
 		check(err)
 		Ugit_update_index(file,&area)
 		indexfileadd(&area)
+	case "status":
+		area  := Loadfromtheindex(&area)
 	default:
 		fmt.Println("holaa")
 	}
