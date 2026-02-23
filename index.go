@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"path/filepath"
+	"bufio"
 )
 
 type Metadata struct {
@@ -77,6 +78,23 @@ func indexfileadd(area *StagingArea){ //writing to the index file
 		check(err)
 	}
 	
+}
+
+func loadfromtheindex(area *StagingArea)(*StagingArea) { //a fuction that load entries from the index file and puts the into the staging area
+	index, err := os.Open(".ugit/index")
+	check(err)
+	defer index.Close()
+	scanner := bufio.NewScanner(index) //to scan the index file
+	for scanner.Scan() {//scan line by line
+		// Get the current line as a string
+		line := scanner.Text()
+		//now i have to retrieve the file path and re
+	}
+
+	if err := scanner.Err(); err != nil {//checks for errs during scanning
+		log.Fatal(err)
+	}
+
 }
 
 func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementing the git update-index --add command
