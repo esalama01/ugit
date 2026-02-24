@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 )
+/*
 func difference(a, b []string) []string {// a functionn to calculate the difference between two slices of strings.
     mb := make(map[string]struct{}, len(b))
     for _, x := range b {
@@ -18,7 +19,7 @@ func difference(a, b []string) []string {// a functionn to calculate the differe
     }
     return diff
 }
-
+*/
 /*
 	i will be implementing the git status command. But how?
 	I ll have to scan the working directory and the stgaingarea and make a comparison between the files.
@@ -57,35 +58,34 @@ func traversal()([]string){ // a function that stores the path of each file in m
 	finished the first implementation of my compare function but i ll need to heavily modify it. Don t forget to add the os.Stat() func to check if a file exists instead of all the slices shit.
 */
 
-func compare(area *StagingArea, paths []string) (int, []string){//a function to compare whatever s in the index file with my current working directory.
-	
+func compare(area *StagingArea, paths []string) (map[string][]string){//a function to compare whatever s in the index file with my current working directory.
+	m := make(map[string][]string)
 	var exists []string //i ll need it to ppoint to removed files
 	//i ll traverse the paths slice  and check if each path exists in my index
-	for _, path := range paths {
+	for _, path := range paths { 
 		f, err := os.Open(path) //open the file to pass it as a parameter in the Get_Hash function.
 		check(err)
-		defer f.Close()
+		
 		value, ok := area.entries[path]
 		if ok { //if it exists
 			val1, _ := Get_Hash(f)
 			exists = append(exists, path)
 			if val1 == value.Id{ //if they re the same
-				return 2, path
+				m["2"] = append(m["2"],path)
 			}else{
-				return 3,path
+				m["3"] = append(m["3"],path)
 			}
-		}else{//if it doesn t eexist
-			return 1, path
+		}else{//if it doesn t exist
+			m["1"] = append(m["1"],path)
 		}
+		f.Close()
 	}
-	//now i ll look for files that should be removed
-	keys := make([]string, len(area.entries)) //a slice containig the keys from my map.
-	i := 0
-	for k := range area.entries {
-		keys[i] = k
-		i++
+	//now look for file that should be deleted
+	for path,_ := range area.entries{
+		_, err := os.Stat(path) //look for files that should be removed
+    	if err != nil {
+        	m["4"] = append(m["4"], path) 
+    	}
 	}
-	//i ll substract keys from exists
-	leftovers := difference(exists, keys)
-	return 4,leftovers
+	return m
 }
