@@ -86,21 +86,21 @@ func Ugit_status() {//crating the basic git status command
 	for key, paths := range status_map{
 		switch key{
 		case "1":
-			fmt.Printf("Untracked files:\n	(use 'ugit add <file>...' to include in what will be committed)")
+			fmt.Printf("Untracked files:\n	(use 'ugit add <file>...' to include in what will be committed)\n")
 			for _, path := range paths{
-				fmt.Printf("%s\n",path)
+				fmt.Printf("	%s\n",path)
 			}
 		case "3","4":
-			fmt.Printf("(use 'ugit restore <file>...' to discard changes in working directory)")
+			fmt.Printf("(use 'ugit restore <file>...' to discard changes in working directory)\n")
 			if key == "3"{
 				fmt.Printf("modified:\n")
 				for _,path := range paths{
-				fmt.Printf("%s\n",path)
+				fmt.Printf("	%s\n",path)
 				}
 			}else{
 				fmt.Printf("deleted:\n")
 				for _,path := range paths{
-				fmt.Printf("%s\n",path)
+				fmt.Printf("	%s\n",path)
 				}
 			}
 		default:
