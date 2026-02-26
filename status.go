@@ -52,7 +52,7 @@ func Compare(area *StagingArea, paths []string) (map[string][]string){//a functi
 		check(err)
 		value, ok := area.entries[path]
 		if ok { //if it exists
-			val1, _ := Get_Hash(f)
+			val1, _ := Get_Hash_Blob(f)
 			f.Close()
 			exists = append(exists, path)
 			if val1 == value.Id{ //if they re the same

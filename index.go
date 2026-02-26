@@ -110,7 +110,7 @@ func Loadfromtheindex(area *StagingArea)(*StagingArea) { //a function that load 
 }
 
 func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementing the git update-index --add command
-	val1, _ := Get_Hash(f)
+	val1, _ := Get_Hash_Blob(f)
 	mdata1, mdata2, mdata3 :=  get_metadata(f)
 	mdata := Metadata{
 		Permissions : mdata2,

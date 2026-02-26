@@ -36,7 +36,7 @@ func lastN(s string, n int) string{ //a function that returns the last n charact
 
 
 
-func Header(file *os.File) string{//must return a "blob__space_size of the contents of the file in bytes_\0"
+func Header_Blob(file *os.File) string{//must return a "blob__space_size of the contents of the file in bytes_\0"
 	//i'll be using the exec.Command() function
 	file_name := file.Name()
 	cmd := exec.Command("wc", "-c", file_name)
@@ -56,11 +56,11 @@ func Header(file *os.File) string{//must return a "blob__space_size of the conte
 	return result
 }
 
-func Sha1(file *os.File) string{
+func Sha1_Blob(file *os.File) string{
 	content, err := os.ReadFile(file.Name())
 	check(err)
 
-	header := Header(file)
+	header := Header_Blob(file)
 	data := []byte(header + string(content))
 	hash := sha1.Sum(data) //in [32]byte format
 	str := hex.EncodeToString(hash[:]) //converted hash to string
@@ -77,18 +77,18 @@ func Compression(file *os.File) string{
 	return string(b.Bytes()[:])
 }
 
-func Get_Hash(f *os.File)(string, string){
-	id := strings.TrimSpace(Sha1(f))
+func Get_Hash_Blob(f *os.File)(string, string){
+	id := strings.TrimSpace(Sha1_Blob(f))
 	return id, Compression(f)
 }
 
 func Ugit_hash_object(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object command
-	val1, _ := Get_Hash(f)
+	val1, _ := Get_Hash_Blob(f)
 	fmt.Printf("%s\n",val1)
 }
 
 func Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to generate the hash id  and the compressed content. eq to the git hash-object -w command
-	val1, val2 := Get_Hash(f)
+	val1, val2 := Get_Hash_Blob(f)
 	b := Blob{
 		Blob_ID : val1,
 		Content : val2,
