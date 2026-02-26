@@ -36,7 +36,7 @@ func get_metadata(f *os.File) (*string, *string, *int64){
 type Index struct {
 	Path string
 	Id string
-	Type string
+	Type *string
 	metadata *Metadata
 	Stage_number int
 }
@@ -87,6 +87,7 @@ func Loadfromtheindex(area *StagingArea)(*StagingArea) { //a function that load 
 	check(err)
 	defer index.Close()
 	scanner := bufio.NewScanner(index) //to scan the index file
+	s := "blob"
 	for scanner.Scan() {//scan line by line
 		// Get the current line as a string
 		line := scanner.Text()
@@ -96,7 +97,7 @@ func Loadfromtheindex(area *StagingArea)(*StagingArea) { //a function that load 
 		idx := Index { //filling the index struct
 		Path : arr[3],
 		Id : arr[2],
-		Type : "blob",
+		Type : &s,
 		Stage_number : get_stage_number(0),
 		}
 
@@ -112,6 +113,7 @@ func Loadfromtheindex(area *StagingArea)(*StagingArea) { //a function that load 
 func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementing the git update-index --add command
 	val1, _ := Get_Hash_Blob(f)
 	mdata1, mdata2, mdata3 :=  get_metadata(f)
+	s := "blob"
 	mdata := Metadata{
 		Permissions : mdata2,
 		Last_modification : mdata1,
@@ -120,7 +122,7 @@ func Ugit_update_index(f *os.File, area *StagingArea) { // i will be implementin
 	idx := Index {
 		Path : get_path(f),
 		Id : val1,
-		Type : "blob",
+		Type : &s,
 		metadata : &mdata,
 		Stage_number : get_stage_number(0),
 	}
