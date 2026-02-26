@@ -17,7 +17,7 @@ import (
 */
 
 
-func traversal()([]string){ // a function that stores the path of each file in my directory on a slice. 
+func Traversal()([]string){ // a function that stores the path of each file in my directory on a slice. 
 	var paths []string //a slice to store the paths in
 	root := "." //the current directory
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
@@ -80,7 +80,7 @@ func Ugit_status() {//crating the basic git status command
         entries: make(map[string]*Index),
     }
 	Loadfromtheindex(&area)
-	paths := traversal()
+	paths := Traversal()
 	status_map := Compare(&area, paths)
 	fmt.Printf("On branch main\n") //to be modified later when implementing branching
 	for key, paths := range status_map{
