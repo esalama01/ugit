@@ -3,28 +3,41 @@ import(
 	"os"
 	"strings"
 )
+//i will construct the tree first ny assigning names to it and adding subtrees and blobs relatiopns by using the trie ds, and after that i will make the tree_ID by using a traversal algorithm.(Merkel)
+
+type TrieNode struct {//i'll define a trie data structure.
+	Name	string
+	Children	map[string]*TrieNode //mapping between 
+	Is_blob	bool
+}
+
+type Trie struct {
+	root	*TrieNode
+}
+
+// Constructor for TrieNode
+func NewTrieNode(name string) *TrieNode {
+	node := new(TrieNode)
+	node.Name = name
+	return node
+}
+
+// Constructor for Trie
+func NewTrie(root_name string) *Trie {
+	return &Trie{root: NewTrieNode(root_name)}
+}
 
 
-func Tree_construction(entry []string, tree *Tree)(*Tree){ // a function that constructs a tree object
-	//an entry example : [testing/mehdi/test.go]
-	for _, name := range entry {
-		fileinfo, err := os.Stat(name)
-		check(err)
-		if (!fileinfo.IsDir()){
-			f, err := os.Open(name)
-			check(err)
-			defer f.Close()
-			val1, val2 := Get_Hash_Blob(f)
-			b := Blob{
-			Blob_ID : val1,
-			Content : val2,
-			}
-			tree.blob[name] = &b.Blob_ID
-			return tree
+func Tree_construction(entry []string, t *Trie){ //a function to implement a word into the trie
+	node := t.root //a pointer to the root of the trie
+	for i := 0; i < len(entry); i++{ //for each file or directory in the path slice
+		if _, ok := node.Children[entry[i]]; ok{ //check if entry[i] exists in the current node children
+			//if yes, move to the corresponding child node.
+			node = node.Children[entry[i]]
+		 }else{//If it doesn't exist, create a new node for the entry[i] and link it to the current node.
+			node = NewTrieNode(entry[i])
 		}
-		else{
-			//my recursion logic
-		}
+		node.Is_blob = true //the end or the path is always a blob.
 	}
 }
 
@@ -33,7 +46,8 @@ func Tree_construction(entry []string, tree *Tree)(*Tree){ // a function that co
 func Ugit_write_tree(){//the function takes as input the index file and reads it.
 
 	//--------------Initializing an empty tree-------------------------------------------
-	tree := new(Tree)
+	my_tree := new(Tree)
+	my_trie := new(Trie)
 	//-----------------------------------------------------------------------------------
 
 	//--------------Loading the staging area along with the paths slice------------------
@@ -46,7 +60,7 @@ func Ugit_write_tree(){//the function takes as input the index file and reads it
 
 	//---------------slicing each path to construct a tree-------------------------------
 	for _, path := range paths{
-		entries := strings.Split(path, "/")
+		entry := strings.Split(path, "/")
 
 	}
 	//-----------------------------------------------------------------------------------
