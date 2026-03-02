@@ -104,7 +104,6 @@ func Ugit_status() {//crating the basic git status command
 				}
 			}
 		default:
-
 		}
 	} 
 }

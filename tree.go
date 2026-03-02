@@ -8,7 +8,7 @@ import(
 
 type TrieNode struct {//i'll define a trie data structure.
 	Name	string
-	Children	map[string]*TrieNode //mapping between 
+	Children	map[string]*TrieNode //mapping between direcotiries' and files' names and their node struct.
 	Is_blob	bool
 }
 
@@ -20,6 +20,7 @@ type Trie struct {
 func NewTrieNode(name string) *TrieNode {
 	node := new(TrieNode)
 	node.Name = name
+	node.Children = make(map[string]*TrieNode)
 	return node
 }
 
@@ -36,10 +37,24 @@ func Tree_construction(entry []string, t *Trie){ //a function to implement a wor
 			//if yes, move to the corresponding child node.
 			node = node.Children[entry[i]]
 		 }else{//If it doesn't exist, create a new node for the entry[i] and link it to the current node.
-			node = NewTrieNode(entry[i])
+			node.Children[entry[i]] = NewTrieNode(entry[i])
+			node = node.Children[entry[i]]
 		}
-		node.Is_blob = true //the end or the path is always a blob.
 	}
+	node.Is_blob = true //the end or the path is always a blob.
+}
+
+func Post_order_trav(node *TrieNode, t *Tree)(*Tree){//a function that takes a trie node as input and returns it's hash value 
+	//base case
+	if node.Is_blob{
+		t.Blob[node.Name] = //a function that computes the hash value for the blob
+	}else{
+		new_tree := new(Tree)
+		for _, val := range node.Children{
+			new_tree[val.Name] = //a function that computes the hash value for the tree
+		}
+	}
+	return t
 }
 
 func directory_name()(string){
@@ -55,8 +70,13 @@ func directory_name()(string){
 //i'll be implementing the git write-tree command.
 func Ugit_write_tree(){//the function takes as input the index file and reads it.
 
-	//--------------Initializing an empty tree-------------------------------------------
+	//--------------constructing an empty tree-------------------------------------------
 	my_tree := new(Tree)
+	my_tree.Blob = make(map[string]string)
+	my_tree.Subtree = make(map[string]string)
+	//-----------------------------------------------------------------------------------
+
+	//--------------constructing an empty trie-------------------------------------------
 	my_trie := NewTrie(directory_name())
 	//-----------------------------------------------------------------------------------
 
@@ -68,10 +88,14 @@ func Ugit_write_tree(){//the function takes as input the index file and reads it
 	paths := Traversal()
 	//-----------------------------------------------------------------------------------
 
-	//---------------slicing each path to construct a tree-------------------------------
+	//---------------slicing each path to fill the trie----------------------------------
 	for _, path := range paths{
 		entry := strings.Split(path, "/")
 		Tree_construction(entry , my_trie)
 	}
+	//-----------------------------------------------------------------------------------
+
+	//----------------Constructing The Tree----------------------------------------------
+
 	//-----------------------------------------------------------------------------------
 }

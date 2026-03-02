@@ -10,10 +10,9 @@ type Blob struct {
 }
 
 type Tree struct {
-	name string
 	Tree_ID string //sha1 hash key of this tree
-	blob map[string]*string //maps between blobs' names and pointers to their ids inside this tree 
-	subtree map[string]*string //maps between subtrees' names and pointer of their ids inside this tree
+	Blob map[string]string //maps between blobs' names and their ids inside this tree 
+	Subtree map[string]string //maps between subtrees' names and their ids inside this tree
 }
 
 type User struct {
