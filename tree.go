@@ -44,21 +44,25 @@ func Tree_construction(entry []string, t *Trie){ //a function to implement a wor
 	node.Is_blob = true //the end or the path is always a blob.
 }
 
-func Post_order_trav(node *TrieNode, t *Tree)(string){//a function that takes a trie node as input and returns it's hash value 
+type Cin struct{
+	sha1_hash string
+	name string
+	mode string
+}
+
+func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node as input and returns it's hash value 
 	//base case
 	if node.Is_blob{
-		t.Blob[node.Name] = //a function that computes the hash value for the blob
-		return t.Blob[node.Name]
+		c := Cin{name : node.Name, mode : "100644", sha1_hash : //a function to compute the sha1 hash of a blob}
+		return c.sha1_hash
 	}else{
-		var my_list []string
-		new_tree := new(Tree)
+		var my_list []*cin
 		for _, sub_node := range node.Children{
-			new_tree[sub_node.Name] = Post_order_trav(sub_node , new_tree)
-			my_list = append(my_list,new_tree[sub_node.Name])
+			entry := Cin{name : syb_node.Name, mode : "40000", sha1_hash : Post_order_trav(sub_node)}
+			my_list.append(my_list, &entry)
 		}
 		//now i ll begin the logic for building the hash out of my_list
 	}
-	return t.Tree_ID
 }
 
 func directory_name()(string){
