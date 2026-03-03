@@ -5,6 +5,9 @@ import(
 	"path/filepath"
 	"slices"
 	"cmp"
+	"crypto/sha1"
+	"encoding/hex"
+	"strconv"
 )
 //i will construct the tree first ny assigning names to it and adding subtrees and blobs relatiopns by using the trie ds, and after that i will make the tree_ID by using a traversal algorithm.(Merkel)
 
@@ -52,29 +55,59 @@ type Cin struct{
 	mode string
 }
 
-func sha1_file(name string)string{
+func Sha1_file(name string)string{
 	file, err := os.Open(name)
 	check(err)
 	val,_ := Get_Hash_Blob(file)
 	return val
 }
 
+func Header_tree(bita9a *Cin)[]byte{
+	var buffer []byte
+	s1 := bita9a.mode
+	s2 := bita9a.name
+	s3 := "\000"
+	data, err := hex.DecodeString(bita9a.sha1_hash)
+	check(err)
+	s4 := data
+	buffer = append(buffer, s1...)
+	buffer = append(buffer, ' ')
+	buffer = append(buffer, s2...)
+	buffer = append(buffer, s3...)
+	buffer = append(buffer, s4...)
+	return buffer
+}
+
+func Sha1_tree(my_list []*Cin)string{
+	slices.SortFunc(my_list, func(a, b *Cin) int { //sorting the structs of my_list by their names.
+			return cmp.Compare(a.name, b.name)
+	})
+	var conc []byte
+	for _, entry := range my_list{
+		header := Header_tree(entry)
+		conc = append(conc, header...) 
+	}
+	my_header := "tree" + " " + strconv.Itoa(len(conc)) + "\000"
+	data := append([]byte(my_header), conc...)
+	hash := sha1.Sum(data)
+	str := hex.EncodeToString(hash[:]) //converted hash to string
+	return string(str) //converted hash to string
+}
+
 func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node as input and returns it's hash value 
 	//base case
 	if node.Is_blob{
-		c := Cin{name : node.Name, mode : "100644", sha1_hash : sha1_file(node.Name)}
+		c := Cin{name : node.Name, mode : "100644", sha1_hash : Sha1_file(node.Name)}
 		return c.sha1_hash
 	}else{
 		var my_list []*Cin
 		for _, sub_node := range node.Children{
-			entry := Cin{name : sub_node.Name, mode : "400000", sha1_hash : Post_order_trav(sub_node)}
+			entry := Cin{name : sub_node.Name, mode : "04000", sha1_hash : Post_order_trav(sub_node)}
 			my_list = append(my_list, &entry)
 		}
 		//now i ll begin the logic for building the hash out of my_list
-		slices.SortFunc(my_list, func(a, b &Cin) string { //sorting the structs of my_list by their names.
-			return cmp.Compare(a.name, b.name)
-		})
-		
+		sha1 := Sha1_tree(my_list)
+		return sha1
 	}
 }
 
