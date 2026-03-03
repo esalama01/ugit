@@ -44,17 +44,21 @@ func Tree_construction(entry []string, t *Trie){ //a function to implement a wor
 	node.Is_blob = true //the end or the path is always a blob.
 }
 
-func Post_order_trav(node *TrieNode, t *Tree)(*Tree){//a function that takes a trie node as input and returns it's hash value 
+func Post_order_trav(node *TrieNode, t *Tree)(string){//a function that takes a trie node as input and returns it's hash value 
 	//base case
 	if node.Is_blob{
 		t.Blob[node.Name] = //a function that computes the hash value for the blob
+		return t.Blob[node.Name]
 	}else{
+		var my_list []string
 		new_tree := new(Tree)
-		for _, val := range node.Children{
-			new_tree[val.Name] = //a function that computes the hash value for the tree
+		for _, sub_node := range node.Children{
+			new_tree[sub_node.Name] = Post_order_trav(sub_node , new_tree)
+			my_list = append(my_list,new_tree[sub_node.Name])
 		}
+		//now i ll begin the logic for building the hash out of my_list
 	}
-	return t
+	return t.Tree_ID
 }
 
 func directory_name()(string){
@@ -70,11 +74,12 @@ func directory_name()(string){
 //i'll be implementing the git write-tree command.
 func Ugit_write_tree(){//the function takes as input the index file and reads it.
 
-	//--------------constructing an empty tree-------------------------------------------
+		//--------------constructing an empty tree-------------------------------------------
 	my_tree := new(Tree)
 	my_tree.Blob = make(map[string]string)
 	my_tree.Subtree = make(map[string]string)
 	//-----------------------------------------------------------------------------------
+
 
 	//--------------constructing an empty trie-------------------------------------------
 	my_trie := NewTrie(directory_name())
