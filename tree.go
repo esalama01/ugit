@@ -3,6 +3,8 @@ import(
 	"os"
 	"strings"
 	"path/filepath"
+	"slices"
+	"cmp"
 )
 //i will construct the tree first ny assigning names to it and adding subtrees and blobs relatiopns by using the trie ds, and after that i will make the tree_ID by using a traversal algorithm.(Merkel)
 
@@ -50,18 +52,29 @@ type Cin struct{
 	mode string
 }
 
+func sha1_file(name string)string{
+	file, err := os.Open(name)
+	check(err)
+	val,_ := Get_Hash_Blob(file)
+	return val
+}
+
 func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node as input and returns it's hash value 
 	//base case
 	if node.Is_blob{
-		c := Cin{name : node.Name, mode : "100644", sha1_hash : //a function to compute the sha1 hash of a blob}
+		c := Cin{name : node.Name, mode : "100644", sha1_hash : sha1_file(node.Name)}
 		return c.sha1_hash
 	}else{
-		var my_list []*cin
+		var my_list []*Cin
 		for _, sub_node := range node.Children{
-			entry := Cin{name : syb_node.Name, mode : "40000", sha1_hash : Post_order_trav(sub_node)}
-			my_list.append(my_list, &entry)
+			entry := Cin{name : sub_node.Name, mode : "400000", sha1_hash : Post_order_trav(sub_node)}
+			my_list = append(my_list, &entry)
 		}
 		//now i ll begin the logic for building the hash out of my_list
+		slices.SortFunc(my_list, func(a, b &Cin) string { //sorting the structs of my_list by their names.
+			return cmp.Compare(a.name, b.name)
+		})
+		
 	}
 }
 
