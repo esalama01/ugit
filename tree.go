@@ -1,5 +1,6 @@
 package main
 import(
+	"compress/zlib"
 	"os"
 	"strings"
 	"path/filepath"
@@ -8,6 +9,7 @@ import(
 	"crypto/sha1"
 	"encoding/hex"
 	"strconv"
+	"bytes"
 )
 //i will construct the tree first ny assigning names to it and adding subtrees and blobs relatiopns by using the trie ds, and after that i will make the tree_ID by using a traversal algorithm.(Merkel)
 
@@ -94,6 +96,14 @@ func Sha1_tree(my_list []*Cin)string{
 	return string(str) //converted hash to string
 }
 
+func Compression_tree(data []byte)[]byte{//compressing the headered data to store as data into the objects directory
+	var b bytes.Buffer
+	w := zlib.NewWriter(&b)
+	w.Write(data)
+	w.Close()
+	return b.Bytes()
+}
+
 func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node as input and returns it's hash value 
 	//base case
 	if node.Is_blob{
@@ -110,6 +120,7 @@ func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node
 		return sha1
 	}
 }
+
 
 func directory_name()(string){
 	dir, err := os.Getwd()
