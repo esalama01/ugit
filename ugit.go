@@ -44,6 +44,8 @@ func main(){
 		indexfileadd(&area)
 	case "status":
 		Ugit_status()
+	case "ugit write-tree":
+		Ugit_write_tree()
 	default:
 		fmt.Println("holaa")
 	}

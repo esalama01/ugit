@@ -136,7 +136,7 @@ func directory_name()(string){
 }
 
 //i'll be implementing the git write-tree command.
-func Ugit_write_tree(){//the function takes as input the index file and reads it.
+func Ugit_write_tree()string{//the function takes as input the index file and reads it.
 
 	//--------------constructing an empty tree-------------------------------------------
 	
@@ -165,4 +165,5 @@ func Ugit_write_tree(){//the function takes as input the index file and reads it
 	//----------------Constructing The Tree----------------------------------------------
 	root_hash := Post_order_trav(my_Tree.root, "")
 	//-----------------------------------------------------------------------------------
+	return root_hash
 }
