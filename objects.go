@@ -28,7 +28,7 @@ type User struct {
 type Commit struct {
 	Commit_ID string //sha1 hash key of this commit
 	Author *User
-	parent_tree *string //points to parent tree's id
-	parents  []*string //slice of pointers to parents commit's ids
+	parent_tree string //points to parent tree's id
+	parents  []string //slice of pointers to parents commit's ids
 	message string
 }
