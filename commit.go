@@ -2,11 +2,8 @@ package main
 
 import(
 	"fmt"
+	"strconv"
 )
-
-func Header_commit(commit *Commit)[]byte{
-	s1 := ""
-}
 
 func content(commit *Commit)[]byte{
 	s1 := "tree" + " " + commit.parent_tree + "\n"
@@ -30,5 +27,16 @@ func content(commit *Commit)[]byte{
 	buffer = append(buffer, s4...)
 	buffer = append(buffer, s5...)
 	buffer = append(buffer, s6...)
+	return buffer
+}
+
+func Header_commit(commit *Commit)[]byte{
+	s1 := "commit"
+	s2 := strconv.Itoa(len(content(commit)))
+	s3 := "\000"
+	var buffer []byte
+	buffer = append(buffer, s1...)
+	buffer = append(buffer, s2...)
+	buffer = append(buffer, s3...)
 	return buffer
 }
