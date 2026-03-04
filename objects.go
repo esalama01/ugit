@@ -9,12 +9,6 @@ type Blob struct {
 	Content string
 }
 
-type Tree struct {
-	Tree_ID string //sha1 hash key of this tree
-	Blob map[string]string //maps between blobs' names and their ids inside this tree 
-	Subtree map[string]string //maps between subtrees' names and their ids inside this tree
-}
-
 type User struct {
 	Username string `json:"user_name"`
 	Useremail string `json:"email_address"`
