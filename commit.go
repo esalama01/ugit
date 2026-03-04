@@ -3,6 +3,10 @@ package main
 import(
 	"fmt"
 	"strconv"
+	"crypto/sha1"
+	"encoding/hex"
+	"compress/zlib"
+	"bytes"
 )
 
 func content(commit *Commit)[]byte{
@@ -32,11 +36,37 @@ func content(commit *Commit)[]byte{
 
 func Header_commit(commit *Commit)[]byte{
 	s1 := "commit"
-	s2 := strconv.Itoa(len(content(commit)))
-	s3 := "\000"
+	s2 := " "
+	s3 := strconv.Itoa(len(content(commit)))
+	s4 := "\000"
 	var buffer []byte
 	buffer = append(buffer, s1...)
 	buffer = append(buffer, s2...)
 	buffer = append(buffer, s3...)
+	buffer = append(buffer, s4...)
 	return buffer
+}
+func get_data(commit *Commit)[]byte{
+	var data []byte
+	data = append(data, Header_commit(commit)...)
+	data = append(data, content(commit)...)
+	return data
+}
+func Sha1_commit(commit *Commit)string{
+	data := get_data(commit)
+	hash := sha1.Sum(data)
+	str := hex.EncodeToString(hash[:])
+	return str
+}
+
+func Compression_commit(data []byte)[]byte{//compressing the headered data to store as data into the objects directory
+	var b bytes.Buffer
+	w := zlib.NewWriter(&b)
+	w.Write(data)
+	w.Close()
+	return b.Bytes()
+}
+
+func ugit_commit(message string){
+
 }
