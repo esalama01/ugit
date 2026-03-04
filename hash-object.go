@@ -19,14 +19,14 @@ type Objects interface {
 }
 //------------------------------------------------------------------
 
-func firstN(s string, n int) string { //a function that returns the first n characters of a string
+func FirstN(s string, n int) string { //a function that returns the first n characters of a string
 	runes := []rune(s)
 	 if n >= len(runes) {
         return s
     }
 	return string(runes[:n])
 }
-func lastN(s string, n int) string{ //a function that returns the last n characters of a string
+func LastN(s string, n int) string{ //a function that returns the last n characters of a string
 	runes := []rune(s)
 	 if n >= len(runes) {
         return s
@@ -93,8 +93,8 @@ func Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to gen
 		Blob_ID : val1,
 		Content : val2,
 	}
-	folder_name := firstN(b.Blob_ID, 2)
-	file_name := lastN(b.Blob_ID, 2)
+	folder_name := FirstN(b.Blob_ID, 2)
+	file_name := LastN(b.Blob_ID, 2)
 	// And then i should create the necessary repos to store the blob in
 	//the folders's name is the first two chars of b.Blob_ID
 	
@@ -115,5 +115,4 @@ func Ugit_hash_object_w(f *os.File){// when called i should call Get_Hash to gen
 	//writing the compressed content to the file
 	_, err = p.WriteString(b.Content)
 	check(err)
-	fmt.Println("Blob created succesfully.")
 }

@@ -15,7 +15,7 @@ import(
 
 type TrieNode struct {//i'll define a trie data structure.
 	Name	string
-	Children	map[string]*TrieNode //mapping between direcotiries' and files' names and their node struct.
+	Children	map[string]*TrieNode //mapping between directories' and files' names and their node struct.
 	Is_blob	bool
 }
 
@@ -37,7 +37,7 @@ func NewTrie(root_name string) *Trie {
 }
 
 
-func Tree_construction(entry []string, t *Trie){ //a function to implement a word into the trie
+func Trie_construction(entry []string, t *Trie){ //a function to implement a word into the trie
 	node := t.root //a pointer to the root of the trie
 	for i := 0; i < len(entry); i++{ //for each file or directory in the path slice
 		if _, ok := node.Children[entry[i]]; ok{ //check if entry[i] exists in the current node children
@@ -61,6 +61,7 @@ func Sha1_file(name string)string{
 	file, err := os.Open(name)
 	check(err)
 	val,_ := Get_Hash_Blob(file)
+	Ugit_hash_object_w(file)
 	return val
 }
 
@@ -93,6 +94,14 @@ func Sha1_tree(my_list []*Cin)string{
 	data := append([]byte(my_header), conc...)
 	hash := sha1.Sum(data)
 	str := hex.EncodeToString(hash[:]) //converted hash to string
+	folder_name := FirstN(string(str), 2)
+	file_name := LastN(string(str), 2)
+
+	objDir := filepath.Join(".ugit", "objects", folder_name)
+	objPath := filepath.Join(objDir, file_name)
+	os.MkdirAll(objDir, 0755)
+	compressed := Compression_tree(data)
+	os.WriteFile(objPath, compressed, 0444)
 	return string(str) //converted hash to string
 }
 
@@ -103,6 +112,7 @@ func Compression_tree(data []byte)[]byte{//compressing the headered data to stor
 	w.Close()
 	return b.Bytes()
 }
+
 
 func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node as input and returns it's hash value 
 	//base case
@@ -121,6 +131,22 @@ func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node
 	}
 }
 
+func tree_construction(trie_node *TrieNode)*Tree{// a function that takes a trie as input an turns it into a ugit_tree.
+	my_tree := new(Tree)
+	my_tree.Blob = make(map[string]string)
+	my_tree.Subtree = make(map[string]string)
+	
+	node := trie_node
+	my_tree.Tree_ID = Post_order_trav(node)
+	for name, sub_node := range node.Children{
+		if sub_node.Is_blob{
+			my_tree.Blob[name] = Post_order_trav(sub_node)
+		}else{
+			my_tree.Subtree[name] = Post_order_trav(sub_node)
+		}
+	}
+	return my_tree
+}
 
 func directory_name()(string){
 	dir, err := os.Getwd()
@@ -136,9 +162,7 @@ func directory_name()(string){
 func Ugit_write_tree(){//the function takes as input the index file and reads it.
 
 		//--------------constructing an empty tree-------------------------------------------
-	my_tree := new(Tree)
-	my_tree.Blob = make(map[string]string)
-	my_tree.Subtree = make(map[string]string)
+	
 	//-----------------------------------------------------------------------------------
 
 
@@ -157,7 +181,7 @@ func Ugit_write_tree(){//the function takes as input the index file and reads it
 	//---------------slicing each path to fill the trie----------------------------------
 	for _, path := range paths{
 		entry := strings.Split(path, "/")
-		Tree_construction(entry , my_trie)
+		Trie_construction(entry , my_trie)
 	}
 	//-----------------------------------------------------------------------------------
 
