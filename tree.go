@@ -11,40 +11,29 @@ import(
 	"strconv"
 	"bytes"
 )
-//i will construct the tree first ny assigning names to it and adding subtrees and blobs relatiopns by using the trie ds, and after that i will make the tree_ID by using a traversal algorithm.(Merkel)
 
-type TrieNode struct {//i'll define a trie data structure.
-	Name	string
-	Children	map[string]*TrieNode //mapping between directories' and files' names and their node struct.
-	Is_blob	bool
-}
-
-type Trie struct {
-	root	*TrieNode
-}
-
-// Constructor for TrieNode
-func NewTrieNode(name string) *TrieNode {
-	node := new(TrieNode)
+// Constructor for TreeNode
+func NewTreeNode(name string) *TreeNode {
+	node := new(TreeNode)
 	node.Name = name
-	node.Children = make(map[string]*TrieNode)
+	node.Children = make(map[string]*TreeNode)
 	return node
 }
 
-// Constructor for Trie
-func NewTrie(root_name string) *Trie {
-	return &Trie{root: NewTrieNode(root_name)}
+// Constructor for Tree
+func NewTree(root_name string) *Tree {
+	return &Tree{root: NewTreeNode(root_name)}
 }
 
 
-func Trie_construction(entry []string, t *Trie){ //a function to implement a word into the trie
-	node := t.root //a pointer to the root of the trie
+func Tree_construction(entry []string, t *Tree){ //a function to implement a word into the Tree
+	node := t.root //a pointer to the root of the Tree
 	for i := 0; i < len(entry); i++{ //for each file or directory in the path slice
 		if _, ok := node.Children[entry[i]]; ok{ //check if entry[i] exists in the current node children
 			//if yes, move to the corresponding child node.
 			node = node.Children[entry[i]]
 		 }else{//If it doesn't exist, create a new node for the entry[i] and link it to the current node.
-			node.Children[entry[i]] = NewTrieNode(entry[i])
+			node.Children[entry[i]] = NewTreeNode(entry[i])
 			node = node.Children[entry[i]]
 		}
 	}
@@ -114,7 +103,7 @@ func Compression_tree(data []byte)[]byte{//compressing the headered data to stor
 }
 
 
-func Post_order_trav(node *TrieNode,prefix string)(string){//a function that takes a trie node as input and returns it's hash value 
+func Post_order_trav(node *TreeNode,prefix string)(string){//a function that takes a Tree node as input and returns it's hash value 
 	//base case
 	path := filepath.Join(prefix, node.Name)
 	if node.Is_blob{
@@ -154,8 +143,8 @@ func Ugit_write_tree(){//the function takes as input the index file and reads it
 	//-----------------------------------------------------------------------------------
 
 
-	//--------------constructing an empty trie-------------------------------------------
-	my_trie := NewTrie("") 
+	//--------------constructing an empty Tree-------------------------------------------
+	my_Tree := NewTree("") 
 	//-----------------------------------------------------------------------------------
 
 	//--------------Loading the staging area along with the paths slice------------------
@@ -166,14 +155,14 @@ func Ugit_write_tree(){//the function takes as input the index file and reads it
 	paths := Traversal()
 	//-----------------------------------------------------------------------------------
 
-	//---------------slicing each path to fill the trie----------------------------------
+	//---------------slicing each path to fill the Tree----------------------------------
 	for _, path := range paths{
 		entry := strings.Split(path, "/")
-		Trie_construction(entry , my_trie)
+		Tree_construction(entry , my_Tree)
 	}
 	//-----------------------------------------------------------------------------------
 
 	//----------------Constructing The Tree----------------------------------------------
-	root_hash := Post_order_trav(my_trie.root, "")
+	root_hash := Post_order_trav(my_Tree.root, "")
 	//-----------------------------------------------------------------------------------
 }

@@ -9,6 +9,16 @@ type Blob struct {
 	Content string
 }
 
+type TreeNode struct {//i'll define a trie data structure.
+	Name	string
+	Children	map[string]*TreeNode //mapping between directories' and files' names and their node struct.
+	Is_blob	bool
+}
+
+type Tree struct {
+	root	*TreeNode
+}
+
 type User struct {
 	Username string `json:"user_name"`
 	Useremail string `json:"email_address"`
