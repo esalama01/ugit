@@ -114,16 +114,20 @@ func Compression_tree(data []byte)[]byte{//compressing the headered data to stor
 }
 
 
-func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node as input and returns it's hash value 
+func Post_order_trav(node *TrieNode,prefix string)(string){//a function that takes a trie node as input and returns it's hash value 
 	//base case
+	path := filepath.Join(prefix, node.Name)
 	if node.Is_blob{
-		c := Cin{name : node.Name, mode : "100644", sha1_hash : Sha1_file(node.Name)}
+		c := Cin{name : node.Name, mode : "100644", sha1_hash : Sha1_file(path)}
 		return c.sha1_hash
 	}else{
 		var my_list []*Cin
 		for _, sub_node := range node.Children{
-			entry := Cin{name : sub_node.Name, mode : "04000", sha1_hash : Post_order_trav(sub_node)}
-			my_list = append(my_list, &entry)
+			my_list = append(my_list, &Cin{
+  				name:      sub_node.Name,
+    			mode:      "04000",
+    			sha1_hash: Post_order_trav(sub_node, path),
+			})
 		}
 		//now i ll begin the logic for building the hash out of my_list
 		sha1 := Sha1_tree(my_list)
@@ -131,22 +135,6 @@ func Post_order_trav(node *TrieNode)(string){//a function that takes a trie node
 	}
 }
 
-func tree_construction(trie_node *TrieNode)*Tree{// a function that takes a trie as input an turns it into a ugit_tree.
-	my_tree := new(Tree)
-	my_tree.Blob = make(map[string]string)
-	my_tree.Subtree = make(map[string]string)
-	
-	node := trie_node
-	my_tree.Tree_ID = Post_order_trav(node)
-	for name, sub_node := range node.Children{
-		if sub_node.Is_blob{
-			my_tree.Blob[name] = Post_order_trav(sub_node)
-		}else{
-			my_tree.Subtree[name] = Post_order_trav(sub_node)
-		}
-	}
-	return my_tree
-}
 
 func directory_name()(string){
 	dir, err := os.Getwd()
@@ -161,13 +149,13 @@ func directory_name()(string){
 //i'll be implementing the git write-tree command.
 func Ugit_write_tree(){//the function takes as input the index file and reads it.
 
-		//--------------constructing an empty tree-------------------------------------------
+	//--------------constructing an empty tree-------------------------------------------
 	
 	//-----------------------------------------------------------------------------------
 
 
 	//--------------constructing an empty trie-------------------------------------------
-	my_trie := NewTrie(directory_name())
+	my_trie := NewTrie("") 
 	//-----------------------------------------------------------------------------------
 
 	//--------------Loading the staging area along with the paths slice------------------
@@ -186,6 +174,6 @@ func Ugit_write_tree(){//the function takes as input the index file and reads it
 	//-----------------------------------------------------------------------------------
 
 	//----------------Constructing The Tree----------------------------------------------
-
+	root_hash := Post_order_trav(my_trie.root, "")
 	//-----------------------------------------------------------------------------------
 }
