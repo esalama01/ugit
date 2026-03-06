@@ -101,8 +101,6 @@ func Compression_tree(data []byte)[]byte{//compressing the headered data to stor
 	w.Close()
 	return b.Bytes()
 }
-
-
 func Post_order_trav(node *TreeNode,prefix string)(string){//a function that takes a Tree node as input and returns it's hash value 
 	//base case
 	path := filepath.Join(prefix, node.Name)
@@ -123,7 +121,6 @@ func Post_order_trav(node *TreeNode,prefix string)(string){//a function that tak
 		return sha1
 	}
 }
-
 
 func directory_name()(string){
 	dir, err := os.Getwd()

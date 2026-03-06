@@ -57,7 +57,7 @@ func get_data(commit *Commit)[]byte{
 	return data
 }
 
-func Sha1_commit(commit *Commit)string{
+func Sha1_commit(commit *Commit)string{//generating the sha-1 commit id.
 	data := get_data(commit)
 	hash := sha1.Sum(data)
 	str := hex.EncodeToString(hash[:])
@@ -72,7 +72,7 @@ func Compression_commit(data []byte)[]byte{//compressing the headered data to st
 	return b.Bytes()
 }
 
-func insert_into_db(commit *Commit){
+func insert_into_db(commit *Commit){//to insert the commit int the objects db
 	my_hash := Sha1_commit(commit)
 	folder_name := FirstN(string(my_hash), 2)
 	file_name := LastN(string(my_hash), 2)
@@ -85,7 +85,7 @@ func insert_into_db(commit *Commit){
 	os.WriteFile(objPath, compressed, 0444)
 }
 
-func get_info()*User{
+func get_info()*User{//to retrieve the user infos
 	var username string
 	var usermail string
 	fmt.Print("Enter your UserName: ")
@@ -100,6 +100,13 @@ func get_info()*User{
 	return &new_user
 }
 
+func get_parent(){// a function to return the sha-1 id of the parent commit
+	//git stores the sha-1 hash of the latest commit at refs/heads/main
+	
+}
+
 func ugit_commit(message string){
+	parent_tree_id := Ugit_write_tree()
+	user_info := get_info()
 	
 }

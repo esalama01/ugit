@@ -45,6 +45,9 @@ func mkdirrr() {
 	//creating the refs subd
 	err = os.MkdirAll(".ugit/refs", 0755)
 	check(err)
+	//creating the refs/heads subd
+	err = os.MkdirAll(".ugit/refs/heads", 0755)
+	check(err)
 }
 
 func create() {
