@@ -8,6 +8,8 @@ import(
 	"compress/zlib"
 	"bytes"
 	"path/filepath"
+	"fmt"
+	"time"
 )
 
 func content(commit *Commit)[]byte{
@@ -83,5 +85,21 @@ func insert_into_db(commit *Commit){
 	os.WriteFile(objPath, compressed, 0444)
 }
 
+func get_info()*User{
+	var username string
+	var usermail string
+	fmt.Print("Enter your UserName: ")
+	fmt.Scanln(&username)
+	fmt.Print("Enter your email address: ")
+	fmt.Scanln(&usermail)
+	new_user := User{
+		Username : username,
+		Useremail : usermail,
+		EventDate : time.Now(),
+	}
+	return &new_user
+}
+
 func ugit_commit(message string){
+	
 }
