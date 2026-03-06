@@ -1,12 +1,13 @@
 package main
 
 import(
-	"fmt"
+	"os"
 	"strconv"
 	"crypto/sha1"
 	"encoding/hex"
 	"compress/zlib"
 	"bytes"
+	"path/filepath"
 )
 
 func content(commit *Commit)[]byte{
@@ -46,12 +47,14 @@ func Header_commit(commit *Commit)[]byte{
 	buffer = append(buffer, s4...)
 	return buffer
 }
+
 func get_data(commit *Commit)[]byte{
 	var data []byte
 	data = append(data, Header_commit(commit)...)
 	data = append(data, content(commit)...)
 	return data
 }
+
 func Sha1_commit(commit *Commit)string{
 	data := get_data(commit)
 	hash := sha1.Sum(data)
@@ -67,6 +70,18 @@ func Compression_commit(data []byte)[]byte{//compressing the headered data to st
 	return b.Bytes()
 }
 
-func ugit_commit(message string){
+func insert_into_db(commit *Commit){
+	my_hash := Sha1_commit(commit)
+	folder_name := FirstN(string(my_hash), 2)
+	file_name := LastN(string(my_hash), 2)
 
+	objDir := filepath.Join(".ugit", "objects", folder_name)
+	objPath := filepath.Join(objDir, file_name)
+	os.MkdirAll(objDir, 0755)
+	data := get_data(commit)
+	compressed := Compression_commit(data)
+	os.WriteFile(objPath, compressed, 0444)
+}
+
+func ugit_commit(message string){
 }
