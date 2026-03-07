@@ -25,7 +25,7 @@ func Traversal()([]string){ // a function that stores the path of each file in m
             return err
         }
 		if d.IsDir() {
-    		if d.Name() == ".ugit" {//skipping the ugit directory
+    		if d.Name() == ".ugit" || d.Name() == ".git"{//skipping the ugit directory
             	return filepath.SkipDir
         	}
     	}

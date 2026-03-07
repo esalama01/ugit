@@ -10,6 +10,7 @@ import(
 	"encoding/hex"
 	"strconv"
 	"bytes"
+	"fmt"
 )
 
 // Constructor for TreeNode
@@ -47,6 +48,11 @@ type Cin struct{
 }
 
 func Sha1_file(name string)string{
+	_, err := os.Stat(name)
+	if err != nil {
+		fmt.Printf("Error: indexed file %s not found on disk\n", name)
+        os.Exit(1) // Stop the execution 
+	}
 	file, err := os.Open(name)
 	check(err)
 	val,_ := Get_Hash_Blob(file)
@@ -149,7 +155,10 @@ func Ugit_write_tree()string{//the function takes as input the index file and re
         entries: make(map[string]*Index),
     }
 	Loadfromtheindex(&area)
-	paths := Traversal()
+	var paths []string
+	for path := range area.entries {
+    paths = append(paths, path)
+	}
 	//-----------------------------------------------------------------------------------
 
 	//---------------slicing each path to fill the Tree----------------------------------

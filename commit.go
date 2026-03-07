@@ -10,6 +10,8 @@ import(
 	"path/filepath"
 	"fmt"
 	"time"
+	"strings"
+	"errors"
 )
 
 func content(commit *Commit)[]byte{
@@ -77,8 +79,8 @@ func insert_into_db(my_hash string, data []byte){//to insert the commit int the 
 	file_name := LastN(string(my_hash), 2)
 
 	objDir := filepath.Join(".ugit", "objects", folder_name)
-	objPath := filepath.Join(objDir, file_name)
 	os.MkdirAll(objDir, 0755)
+	objPath := filepath.Join(objDir, file_name)
 	compressed := Compression_commit(data)
 	os.WriteFile(objPath, compressed, 0444)
 }
@@ -103,7 +105,8 @@ func get_parent()(string,int){// a function to return the sha-1 id of the parent
 	if err != nil {
 		return "", 0
 	}
-	return string(data), 1
+	trimmedData := strings.TrimSpace(string(data))
+	return trimmedData, 1
 }
 
 func ugit_commit(input_message string){
@@ -114,11 +117,6 @@ func ugit_commit(input_message string){
 	if exists == 1{
 		parents_list = append(parents_list, parent)
 	}else{
-		//i must first create the main file
-		cont := []byte("")
-		objDir := filepath.Join(".ugit", "refs", "heads")
-		objPath := filepath.Join(objDir, "main")
-		os.WriteFile(objPath, cont, 0644)
 	}
 	new_commit := Commit{
 		Author : user_info,
@@ -134,7 +132,15 @@ func ugit_commit(input_message string){
 	//writing to the refs/heads/main
 	objDir := filepath.Join(".ugit", "refs", "heads")
 	objPath := filepath.Join(objDir, "main")
+	_, err := os.Stat(objPath)
+	if errors.Is(err, os.ErrNotExist) {
+		os.MkdirAll(objDir, 0755)  // File does not exist
+	}
 	content := []byte(id)
-	os.WriteFile(objPath, content, 0644)
+	err = os.WriteFile(objPath, content, 0644)
+	if err != nil {
+        fmt.Println("CRITICAL ERROR: Could not write main ref:", err)
+        return // Stop here so we don't lie to the user
+    }
 	fmt.Println("Commit created succesfully")
 }
