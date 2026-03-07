@@ -44,8 +44,15 @@ func main(){
 		indexfileadd(&area)
 	case "status":
 		Ugit_status()
-	case "ugit write-tree":
+	case "write-tree":
 		Ugit_write_tree()
+	case "commit":
+		if args[2] == "-m"{
+			message := args[3]
+			ugit_commit(message)
+		}else{
+			fmt.Println("add a flag!")
+		}
 	default:
 		fmt.Println("holaa")
 	}

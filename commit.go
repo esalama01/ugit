@@ -134,8 +134,7 @@ func ugit_commit(input_message string){
 	//writing to the refs/heads/main
 	objDir := filepath.Join(".ugit", "refs", "heads")
 	objPath := filepath.Join(objDir, "main")
-	err := os.Truncate(objPath, 0) //deleting it's content first.
-	check(err)
 	content := []byte(id)
 	os.WriteFile(objPath, content, 0644)
+	fmt.Println("Commit created succesfully")
 }
