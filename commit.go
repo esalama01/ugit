@@ -72,15 +72,13 @@ func Compression_commit(data []byte)[]byte{//compressing the headered data to st
 	return b.Bytes()
 }
 
-func insert_into_db(commit *Commit){//to insert the commit int the objects db
-	my_hash := Sha1_commit(commit)
+func insert_into_db(my_hash string, data []byte){//to insert the commit int the objects db
 	folder_name := FirstN(string(my_hash), 2)
 	file_name := LastN(string(my_hash), 2)
 
 	objDir := filepath.Join(".ugit", "objects", folder_name)
 	objPath := filepath.Join(objDir, file_name)
 	os.MkdirAll(objDir, 0755)
-	data := get_data(commit)
 	compressed := Compression_commit(data)
 	os.WriteFile(objPath, compressed, 0444)
 }
@@ -100,13 +98,44 @@ func get_info()*User{//to retrieve the user infos
 	return &new_user
 }
 
-func get_parent(){// a function to return the sha-1 id of the parent commit
-	//git stores the sha-1 hash of the latest commit at refs/heads/main
-	
+func get_parent()(string,int){// a function to return the sha-1 id of the parent commit
+	data, err := os.ReadFile(".ugit/refs/heads/main") //read the refs/heads/main 
+	if err != nil {
+		return "", 0
+	}
+	return string(data), 1
 }
 
-func ugit_commit(message string){
+func ugit_commit(input_message string){
+	var parents_list []string
 	parent_tree_id := Ugit_write_tree()
 	user_info := get_info()
-	
+	parent, exists := get_parent()
+	if exists == 1{
+		parents_list = append(parents_list, parent)
+	}else{
+		//i must first create the main file
+		cont := []byte("")
+		objDir := filepath.Join(".ugit", "refs", "heads")
+		objPath := filepath.Join(objDir, "main")
+		os.WriteFile(objPath, cont, 0644)
+	}
+	new_commit := Commit{
+		Author : user_info,
+		parent_tree : parent_tree_id,
+		parents : parents_list,
+		message : input_message,
+	}
+	id := Sha1_commit(&new_commit)
+	new_commit.Commit_ID = id
+	data := get_data(&new_commit)
+	insert_into_db(id, data)
+//-------commit object created succesfully.-----------
+	//writing to the refs/heads/main
+	objDir := filepath.Join(".ugit", "refs", "heads")
+	objPath := filepath.Join(objDir, "main")
+	err := os.Truncate(objPath, 0) //deleting it's content first.
+	check(err)
+	content := []byte(id)
+	os.WriteFile(objPath, content, 0644)
 }
