@@ -75,7 +75,7 @@ func Compare(area *StagingArea, paths []string) (map[string][]string){//a functi
 	return m
 }
 
-func Ugit_status() {//crating the basic git status command
+func Ugit_status() {//creating the basic git status command
 	area := StagingArea{
         entries: make(map[string]*Index),
     }
