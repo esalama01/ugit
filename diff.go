@@ -7,6 +7,8 @@ import(
 	"compress/zlib"
 	"strings"
 	"io"
+	"path/filepath"
+	"fmt"
 )
 
 type Sha1_path struct{
@@ -47,7 +49,8 @@ func Compare_with_sha1() ([]*Sha1_path){//a function to compare whatever s in th
 	return m
 }
 
-func Ugit_cat_file(path string) string{
+func Ugit_cat_file(sha1 string) string{
+	path := filepath.Join(".ugit", "objects", FirstN(string(sha1), 2), LastN(string(sha1), 2))
 	content, err := os.ReadFile(path)
 	check(err)
 	compressed := []byte(content)
@@ -59,5 +62,23 @@ func Ugit_cat_file(path string) string{
 	_, err = io.Copy(&sb, r)
 	check(err)
 	text := sb.String()
-	//i need to remove the header from the text.
+	return text
+}
+
+func Ugit_diff(){
+	var res []*Sha1_path
+	res = Compare_with_sha1()
+	for _, element := range res{
+		differ := myers.NewDiffer()
+		d, err := os.ReadFile(element.Path)
+		check(err)
+		data := string(d)
+		text := Ugit_cat_file(element.Checksum)
+		edits, err := differ.Diff(text, data)
+		if err != nil {
+			fmt.Printf("Error generating diff: %v\n", err)
+			return
+		}
+		fmt.Printf("Diff Result: %v\n", edits)
+	}	
 }

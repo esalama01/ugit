@@ -53,6 +53,8 @@ func main(){
 		}else{
 			fmt.Println("add a flag!")
 		}
+	case "diff":
+		Ugit_diff()
 	default:
 		fmt.Println("holaa")
 	}
